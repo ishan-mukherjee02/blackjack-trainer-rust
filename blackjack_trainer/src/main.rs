@@ -67,6 +67,10 @@ impl Hand {
         return false;
     }
     
+     /**
+     * Returns the cards in this hand followed by their numerical value
+     * Ex: JS AH (21)
+     */
     pub fn to_string(&self) -> String {
         let mut hand = String::new();
 
@@ -75,6 +79,14 @@ impl Hand {
             hand.push(' ');
         }
         return hand;
+    }
+
+    /**
+     * Adds the specified card to this hand
+     * @param card the card to add
+     */
+    pub fn add_card(&mut self, card: Card) {
+        self.cards.push(card);
     }
 }
 
