@@ -1,4 +1,5 @@
 use std::fmt::format;
+use rand::prelude::*;
 
 struct Card{
     suit: String,
@@ -125,10 +126,12 @@ impl Shoe {
      */
     pub fn new(init_decks: i64) -> Self {
         let mut init_shoe = Vec::<Card>::new();
-        Shoe{
+        let mut new_shoe = Shoe{
            decks: init_decks,
            shoe: init_shoe
-        }
+        };
+        new_shoe.reset();
+        new_shoe
     }
 
      /**
@@ -151,9 +154,24 @@ impl Shoe {
      * Resets this shoe to contain all of its original cards.
      * This shoe will be shuffled.
      */
-    pub fn reset() {
+    pub fn reset(&mut self) {
         //  TODO: Implement
+        let suits = ["H", "D", "C", "S"];
+        self.shoe.clear();
 
+        for suit in suits {
+            for value in 1..=13 {
+                for _ in 0..self.decks {
+                    self.shoe.push( Card {
+                        suit: suit.to_string(),
+                        rank: value,
+                    });
+                }
+            }
+        }
+
+        let mut rng = thread_rng();
+        self.shoe.shuffle(&mut rng);
     }
 }
 
