@@ -1,3 +1,5 @@
+use std::fmt::format;
+
 struct Card{
     suit: String,
     rank: i64,
@@ -10,8 +12,26 @@ impl Card {
         }
     }
 
+    /**
+     * Returns this card with the 1 or 2 character value (A, 2-10, J, Q, K)
+     * followed by the 1 character suit (D, H, S, C)
+     * Examples: JD, 10H, AS, 9C
+     */
     pub fn to_string(&self) -> String {
-        format!("{} {}", &self.rank, &self.suit)
+        let mut card = String::new();
+
+        if self.rank == 1 {
+            card.push('A');
+        } else if self.rank == 11 {
+            card.push('J');
+        } else if self.rank == 12 {
+            card.push('Q');
+        } else if self.rank == 13 {
+            card.push('K');
+        } else {
+            card.push_str(&self.rank.to_string());
+        }
+        return format!("{}{}", card, &self.suit)
     }
 }
 
@@ -78,7 +98,9 @@ impl Hand {
             hand.push_str(&card.to_string());
             hand.push(' ');
         }
-        return hand;
+
+        let result = format!("{}({})", hand, self.get_value());
+        return result;
     }
 
     /**
@@ -90,11 +112,62 @@ impl Hand {
     }
 }
 
+struct Shoe{
+    decks: i64,
+    shoe: Vec<Card>
+} 
+impl Shoe {
+
+    /**
+     * Constructs a shoe with the specified number of decks.
+     * This shoe will be shuffled.
+     * @param decks the number of decks
+     */
+    pub fn new(init_decks: i64) -> Self {
+        let mut init_shoe = Vec::<Card>::new();
+        Shoe{
+           decks: init_decks,
+           shoe: init_shoe
+        }
+    }
+
+     /**
+     * Removes and returns a card from this shoe
+     * @return the card removed from this shoe.
+     */
+    pub fn deal_card(&mut self) -> Option<Card> {
+        return self.shoe.pop();
+    }
+
+    /**
+     * Returns the number of cards left in this shoe
+     * @return the number of cards left in this shoe
+     */
+    pub fn cards_left(self) -> usize {
+        return self.shoe.len();
+    }
+
+    /**
+     * Resets this shoe to contain all of its original cards.
+     * This shoe will be shuffled.
+     */
+    pub fn reset() {
+        //  TODO: Implement
+
+    }
+}
+
 fn main() {
     let card1 = Card {
-        suit: String::from("Clubs"),
+        suit: String::from("C"),
         rank: 12,
     };
+    let card2 = Card {
+        suit: String::from("S"),
+        rank: 1,
+    }; 
 
-    println!("{}", card1.to_string());
+    let hand1 = Hand::new(card1, card2);
+        
+    println!("{}", hand1.to_string());
 }
