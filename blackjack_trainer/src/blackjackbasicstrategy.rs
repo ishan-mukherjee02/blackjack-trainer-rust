@@ -3,7 +3,6 @@ pub struct BlackjackBasicStrategy {
   soft: [[i32; 10]; 9],
   pair: [[i32; 10]; 10],
 }
-
 impl BlackjackBasicStrategy {
   pub fn new() -> Self {
       let hard = [
