@@ -1,6 +1,6 @@
 mod blackjack{
-    use std::fmt::format;
     use rand::prelude::*;
+    use std::any::type_name;
 
     struct Card{
         suit: String,
@@ -42,12 +42,10 @@ mod blackjack{
     }
     impl Hand {
         pub fn new(card1: Card, card2: Card) -> Self {
-            let mut cards1 = Vec::new();
-            cards1.push(card1);
-            cards1.push(card2);
-            Hand{
-            cards: cards1
-            }
+            let mut cards = Vec::new();
+            cards.push(card1);
+            cards.push(card2);
+            Hand{ cards }
         }
 
         /**
@@ -119,7 +117,7 @@ mod blackjack{
         shoe: Vec<Card>
     } 
     impl Shoe {
-    /**
+        /**
          * Constructs a shoe with the specified number of decks.
          * This shoe will be shuffled.
          * @param decks the number of decks
@@ -133,20 +131,20 @@ mod blackjack{
             new_shoe.reset();
             new_shoe
         }
-
+        
         /**
          * Removes and returns a card from this shoe
          * @return the card removed from this shoe.
          */
         pub fn deal_card(&mut self) -> Option<Card> {
-            return self.shoe.pop();
+            self.shoe.pop() // `pop` returns an `Option<Card>`, no need to manually unwrap.
         }
 
         /**
          * Returns the number of cards left in this shoe
          * @return the number of cards left in this shoe
          */
-        pub fn cards_left(self) -> usize {
+        pub fn cards_left(&self) -> usize {
             return self.shoe.len();
         }
 
@@ -155,7 +153,6 @@ mod blackjack{
          * This shoe will be shuffled.
          */
         pub fn reset(&mut self) {
-            //  TODO: Implement
             let suits = ["H", "D", "C", "S"];
             self.shoe.clear();
 
@@ -174,7 +171,6 @@ mod blackjack{
             self.shoe.shuffle(&mut rng);
         }
     }
-
 
     const DECKS: usize = 6;
     const CARDS_PER_DECK: usize = 54;
@@ -195,5 +191,122 @@ mod blackjack{
             };
             new_blackjack
         }
+
+        /**
+        * Resets for another round, including reseting shoe if necessary
+        */
+        pub fn reset(mut self) {
+            if self.shoe.cards_left() as f64 / (CARDS_PER_DECK as f64 * DECKS as f64) <= 0.25 {
+                self.shoe.reset()
+            }
+        }
+
+        /**
+         * Places a bet at the start of a round. Deals cards to the player and dealer.
+         * @param amount the amount to bet
+         */
+        pub fn deal_card(&mut self) {
+            let card1 = self.shoe.deal_card().expect("No more cards in the deck");
+            let card2 = self.shoe.deal_card().expect("No more cards in the deck");
+            let card3 = self.shoe.deal_card().expect("No more cards in the deck");
+            let card4 = self.shoe.deal_card().expect("No more cards in the deck");
+
+            self.player_hand = Some(Hand::new(card1, card2));
+            self.dealer_hand = Some(Hand::new(card3, card4));
+        }
+
+        /**
+         * Returns true if the player can hit, false otherwise
+         * @return true if the player can hit, false otherwise
+         */
+        pub fn can_hit(self) -> bool {
+            let hand1 = self.player_hand.expect("NONE");
+            let hand2 = self.dealer_hand.expect("NONE");
+            
+            return hand1.get_value() < 21 && !hand2.is_blackjack();
+        }
+
+        /**
+         * Deals another card to the player's hand.
+         * 
+         * Precondition: canHit()
+         */
+        pub fn hit(&mut self) {
+            self.player_hand.as_mut().expect("NONE").add_card(self.shoe.deal_card().expect("EMPTY"))
+        }
+
+        /**
+         * Plays the dealer's hand.
+         */
+        pub fn play_dealers_hand(&mut self) {
+            // Make sure dealer's hand exists.
+            let dealer_hand = self.dealer_hand.as_mut().expect("Dealer hand is not initialized");
+
+            // While the value of the dealer's hand is less than 17, continue to deal cards
+            while dealer_hand.get_value() < 17 {
+                let card = self.shoe.deal_card(); // Deal a card from the shoe
+                dealer_hand.add_card(card.expect("None")); // Add it to the dealer's hand
+            }
+
+            // Print the dealer's final hand
+            println!("Dealer has: {}", dealer_hand.to_string());
+        }
+
+        /**
+         * Returns true if the player's hand is a push, false otherwise
+         */
+        pub fn is_push(&self) -> bool {
+            let dealer_hand = self.dealer_hand.as_ref().expect("Dealer hand is not initialized");
+            let player_hand = self.player_hand.as_ref().expect("Player hand is not initialized");
+
+            // Condition 1: Dealer has blackjack, player does not, and player has 21
+            if dealer_hand.is_blackjack() && !player_hand.is_blackjack() && player_hand.get_value() == 21 {
+                return false;
+            }
+
+            // Condition 2: Player has blackjack, dealer does not, and dealer has 21
+            if player_hand.is_blackjack() && !dealer_hand.is_blackjack() && dealer_hand.get_value() == 21 {
+                return false;
+            }
+
+            // Condition 3: It's a push if both hands have the same value
+            return dealer_hand.get_value() == player_hand.get_value();
+        }
+    
+        /**
+         * Returns true if the player's hand is a player win, false otherwise
+         */
+        pub fn is_player_win(&self) -> bool {
+            let dealer_hand = self.dealer_hand.as_ref().expect("Dealer hand is not initialized");
+            let player_hand = self.player_hand.as_ref().expect("Player hand is not initialized");
+
+            // Dealer has blackjack, player loses
+            if dealer_hand.is_blackjack() {
+                return false;
+            }
+
+            // Player has blackjack, player wins
+            if player_hand.is_blackjack() {
+                return true;
+            }
+
+            // Dealer busts (over 21) and player does not bust
+            if dealer_hand.get_value() > 21 && player_hand.get_value() <= 21 {
+                return true;
+            }
+
+            // Player has a higher hand value than the dealer and doesn't bust
+            if player_hand.get_value() > dealer_hand.get_value() && player_hand.get_value() <= 21 {
+                return true;
+            }
+
+            // In all other cases, player loses
+            return false;
+        }
+    
+    
+    
+    
     }
+    
 }
