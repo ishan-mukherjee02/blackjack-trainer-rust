@@ -11,7 +11,7 @@ pub struct BlackjackUI {
 }
 
 impl BlackjackUI {
-    /// Constructs a Blackjack game with $1,000 in player bankroll
+    // Constructs a Blackjack game with $1,000 in player bankroll
     pub fn new() -> Self {
         BlackjackUI {
             bj: Blackjack::new(),
@@ -74,31 +74,30 @@ impl BlackjackUI {
             match response.trim().to_lowercase().as_str() {
                 "hit" => {
                     self.bj.hit();
-                    if self.bj.new > 21 {
+                    if self.bj.get_players_hand().expect("Empty").get_value() > 21 {
                         println!("You are bust.");
                     }
                 }
                 "double" => {
-                    self.bj.doublee();
-                    if self.bj.get_players_hand().get_value() > 21 {
+                    if self.bj.get_players_hand().expect("Empty").get_value() > 21 {
                         println!("You are bust.");
                     }
-                    println!("You have: {}", self.bj.get_players_hand());
+                    println!("You have: {}", self.bj.get_players_hand().expect("Empty").to_string());
                     break;
                 }
                 "stand" => break,
                 _ => println!("Invalid option, please type 'hit', 'stand', or 'double'."),
             }
 
-            println!("You have: {}", self.bj.get_players_hand());
+            println!("You have: {}", self.bj.get_players_hand().expect("Empty").to_string());
         }
     }
 
     /// Displays the result of the hand (push, player win, player blackjack, or loss)
     fn display_result(&mut self) {
-        if self.bj.get_dealers_hand().is_blackjack() && self.bj.get_players_hand().is_blackjack() {
+        if self.bj.get_dealers_hand().expect("Empty").is_blackjack() && self.bj.get_players_hand().expect("Empty").is_blackjack() {
             println!("Y'all both got blackjack, it's a push.");
-        } else if self.bj.get_players_hand().is_blackjack() {
+        } else if self.bj.get_players_hand().expect("Empty").is_blackjack() {
             println!("YOU GOT BLACKJACK!");
         } else if self.bj.is_player_win() {
             println!("Player win.");

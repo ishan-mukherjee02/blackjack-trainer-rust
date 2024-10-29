@@ -215,7 +215,6 @@ impl Blackjack {
 
     /**
      * Returns true if the player can hit, false otherwise
-     * @return true if the player can hit, false otherwise
      */
     pub fn can_hit(self) -> bool {
         let hand1 = self.player_hand.expect("NONE");
@@ -306,6 +305,9 @@ impl Blackjack {
         return self.player_hand;
     }
 
+    pub fn get_dealers_hand(&self) -> Option<Hand> {
+        return self.dealer_hand;
+    }
 
 }
 
