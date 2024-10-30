@@ -63,6 +63,9 @@ impl BlackjackUI {
 
     /// Allows the player to hit until it is no longer possible or until the player chooses to stand
     fn play_players_hand(&mut self) {
+        println!("You have: {}", self.bj.get_players_hand().expect("nothing").to_string());
+        println!("Dealer has: {}", self.bj.get_dealers_hand().expect("nothing").to_string());
+
         let mut response = String::new();
 
         while self.bj.can_hit() {
@@ -74,22 +77,22 @@ impl BlackjackUI {
             match response.trim().to_lowercase().as_str() {
                 "hit" => {
                     self.bj.hit();
-                    if self.bj.get_players_hand().expect("Empty").get_value() > 21 {
+                    if self.bj.get_players_hand().expect("nothing").get_value() > 21 {
                         println!("You are bust.");
                     }
                 }
                 "double" => {
-                    if self.bj.get_players_hand().expect("Empty").get_value() > 21 {
+                    if self.bj.get_players_hand().expect("nothing").get_value() > 21 {
                         println!("You are bust.");
                     }
-                    println!("You have: {}", self.bj.get_players_hand().expect("Empty").to_string());
+                    println!("You have: {}", self.bj.get_players_hand().expect("nothing").to_string());
                     break;
                 }
                 "stand" => break,
                 _ => println!("Invalid option, please type 'hit', 'stand', or 'double'."),
             }
 
-            println!("You have: {}", self.bj.get_players_hand().expect("Empty").to_string());
+            println!("You have: {}", self.bj.get_players_hand().expect("nothing").to_string());
         }
     }
 

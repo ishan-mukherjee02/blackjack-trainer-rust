@@ -301,11 +301,11 @@ impl Blackjack {
         return false;
     }
 
-    pub fn get_players_hand(&self) -> Option<Hand> {
+    pub fn get_players_hand(self) -> Option<Hand> {
         return self.player_hand;
     }
 
-    pub fn get_dealers_hand(&self) -> Option<Hand> {
+    pub fn get_dealers_hand(self) -> Option<Hand> {
         return self.dealer_hand;
     }
 
