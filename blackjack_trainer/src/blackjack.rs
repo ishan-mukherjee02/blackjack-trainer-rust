@@ -35,7 +35,7 @@ impl Card {
     }
 }
 
-struct Hand{
+pub struct Hand{
     cards: Vec<Card>
 }
 impl Hand {
@@ -216,9 +216,9 @@ impl Blackjack {
     /**
      * Returns true if the player can hit, false otherwise
      */
-    pub fn can_hit(self) -> bool {
-        let hand1 = self.player_hand.expect("NONE");
-        let hand2 = self.dealer_hand.expect("NONE");
+    pub fn can_hit(&self) -> bool {
+        let hand1 = &self.player_hand.as_ref().expect("NONE");
+        let hand2 = &self.dealer_hand.as_ref().expect("NONE");
         
         return hand1.get_value() < 21 && !hand2.is_blackjack();
     }
@@ -301,12 +301,12 @@ impl Blackjack {
         return false;
     }
 
-    pub fn get_players_hand(self) -> Option<Hand> {
-        return self.player_hand;
+    pub fn get_players_hand(&self) -> Option<&Hand> {
+        return self.player_hand.as_ref();
     }
 
-    pub fn get_dealers_hand(self) -> Option<Hand> {
-        return self.dealer_hand;
+    pub fn get_dealers_hand(&self) -> Option<&Hand> {
+        return self.dealer_hand.as_ref();
     }
 
 }

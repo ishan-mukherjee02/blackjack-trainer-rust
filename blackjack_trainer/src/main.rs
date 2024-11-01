@@ -1,7 +1,6 @@
 mod blackjack;
 mod blackjackbasicstrategy;
 
-use crate::blackjackbasicstrategy::BlackjackBasicStrategy;
 use crate::blackjack::Blackjack;
 use std::io::{self, Write};
 
@@ -11,7 +10,7 @@ pub struct BlackjackUI {
 }
 
 impl BlackjackUI {
-    // Constructs a Blackjack game with $1,000 in player bankroll
+    // Constructs a Blackjack game
     pub fn new() -> Self {
         BlackjackUI {
             bj: Blackjack::new(),
@@ -68,31 +67,39 @@ impl BlackjackUI {
 
         let mut response = String::new();
 
-        while self.bj.can_hit() {
+        let bj = &mut self.bj;
+
+        while bj.can_hit() {
             println!("Do you want to hit, stand, or double?");
             io::stdout().flush().unwrap();
             response.clear();
             io::stdin().read_line(&mut response).unwrap();
-
+    
             match response.trim().to_lowercase().as_str() {
                 "hit" => {
-                    self.bj.hit();
-                    if self.bj.get_players_hand().expect("nothing").get_value() > 21 {
+                    bj.hit();
+                    if bj.get_players_hand().expect("nothing").get_value() > 21 {
                         println!("You are bust.");
                     }
                 }
                 "double" => {
-                    if self.bj.get_players_hand().expect("nothing").get_value() > 21 {
+                    if bj.get_players_hand().expect("nothing").get_value() > 21 {
                         println!("You are bust.");
                     }
-                    println!("You have: {}", self.bj.get_players_hand().expect("nothing").to_string());
+                    println!(
+                        "You have: {}",
+                        bj.get_players_hand().expect("nothing").to_string()
+                    );
                     break;
                 }
                 "stand" => break,
                 _ => println!("Invalid option, please type 'hit', 'stand', or 'double'."),
             }
-
-            println!("You have: {}", self.bj.get_players_hand().expect("nothing").to_string());
+    
+            println!(
+                "You have: {}",
+                bj.get_players_hand().expect("nothing").to_string()
+            );
         }
     }
 
