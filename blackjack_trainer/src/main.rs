@@ -4,7 +4,6 @@ mod blackjackbasicstrategy;
 use crate::blackjack::Blackjack;
 use std::io::{self, Write};
 
-
 pub struct BlackjackUI {
     bj: Blackjack,
 }
@@ -17,31 +16,14 @@ impl BlackjackUI {
         }
     }
 
-    /// Returns a valid numerical bet obtained from the player
-    fn get_valid_bet(&mut self) -> f64 {
-        println!("What is your bet: ");
-        let mut input = String::new();
-
-        loop {
-            io::stdout().flush().unwrap();
-            input.clear();
-            io::stdin().read_line(&mut input).unwrap();
-
-            match input.trim().parse::<f64>() {
-                Ok(money) if money > 0.0 => return money,
-                _ => println!("Please enter a valid bet greater than 0."),
-            }
-        }
-    }
-
-    /// Plays a single hand of blackjack
+    // Plays a single hand of blackjack
     pub fn play_hand(&mut self) {
         self.play_players_hand();
         self.bj.play_dealers_hand();
         self.display_result();
     }
 
-    /// Plays blackjack hands until the user chooses to quit
+    // Plays blackjack hands until the user chooses to quit
     pub fn play_hands_until_quit(&mut self) {
         let mut input = String::new();
 
@@ -60,7 +42,7 @@ impl BlackjackUI {
         println!("Thanks for playing");
     }
 
-    /// Allows the player to hit until it is no longer possible or until the player chooses to stand
+    // Allows the player to hit until it is no longer possible or until the player chooses to stand
     fn play_players_hand(&mut self) {
         println!("You have: {}", self.bj.get_players_hand().expect("nothing").to_string());
         println!("Dealer has: {}", self.bj.get_dealers_hand().expect("nothing").to_string());
@@ -103,7 +85,7 @@ impl BlackjackUI {
         }
     }
 
-    /// Displays the result of the hand (push, player win, player blackjack, or loss)
+    // Displays the result of the hand (push, player win, player blackjack, or loss)
     fn display_result(&mut self) {
         if self.bj.get_dealers_hand().expect("Empty").is_blackjack() && self.bj.get_players_hand().expect("Empty").is_blackjack() {
             println!("Y'all both got blackjack, it's a push.");
@@ -118,10 +100,6 @@ impl BlackjackUI {
         }
     }
 
-    /// Converts a string to a number or returns -1 if input is not numeric
-    fn string_to_number(input: &str) -> f64 {
-        input.trim().parse().unwrap_or(-1.0)
-    }
 }
 
 /**
