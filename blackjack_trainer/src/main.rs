@@ -99,12 +99,12 @@ impl BlackjackUI {
             println!("Player loss.");
         }
     }
-
 }
 
 /**
  * A text based user interface that allows the user to play a game of blackjack.
  */
 fn main() {
-    
+    let mut game = BlackjackUI::new();
+    game.play_hands_until_quit();
 }
