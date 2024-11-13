@@ -121,7 +121,7 @@ impl Shoe {
      * @param decks the number of decks
      */
     pub fn new(init_decks: usize) -> Self {
-        let mut init_shoe = Vec::<Card>::new();
+        let init_shoe = Vec::<Card>::new();
         let mut new_shoe = Shoe{
         decks: init_decks,
         shoe: init_shoe
@@ -180,9 +180,9 @@ pub struct Blackjack {
 }
 impl Blackjack {
     pub fn new() -> Self {
-        let mut init_shoe = Shoe::new(DECKS);
+        let init_shoe = Shoe::new(DECKS);
 
-        let mut new_blackjack = Blackjack{
+        let new_blackjack = Blackjack{
             shoe: init_shoe,
             player_hand: None,
             dealer_hand: None,
