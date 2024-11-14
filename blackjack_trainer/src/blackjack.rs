@@ -1,6 +1,6 @@
 use rand::prelude::*;
 
-struct Card{
+pub struct Card{
     suit: String,
     rank: i64,
 }
@@ -110,7 +110,7 @@ impl Hand {
     }
 }
 
-struct Shoe{
+pub struct Shoe{
     decks: usize,
     shoe: Vec<Card>
 } 
