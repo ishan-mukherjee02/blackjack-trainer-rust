@@ -5,7 +5,7 @@ pub struct Card{
     rank: i64,
 }
 impl Card {
-    pub fn new(suit: String, rank: i64) -> Self{
+    pub fn new(suit: String, rank: i64) -> Self {
         Card{
             suit,
             rank
@@ -52,7 +52,7 @@ impl Hand {
      */
     pub fn get_value(&self) -> i64 {       
         let mut sum = 0;   
-        let mut aceCounter = 0;
+        let mut ace_counter = 0;
 
         for card in &self.cards {
             if card.rank == 11 || card.rank == 12 || card.rank == 13 {
@@ -63,11 +63,11 @@ impl Hand {
             }
 
             if card.rank == 1 {
-                aceCounter += 1;
+                ace_counter += 1;
             }
         }
 
-        if sum < 12 && aceCounter > 0 {
+        if sum < 12 && ace_counter > 0 {
             sum += 10
         }
 
@@ -193,22 +193,23 @@ impl Blackjack {
     /**
     * Resets for another round, including reseting shoe if necessary
     */
-    pub fn reset(mut self) {
+    pub fn reset(&mut self) {
         if self.shoe.cards_left() as f64 / (CARDS_PER_DECK as f64 * DECKS as f64) <= 0.25 {
             self.shoe.reset()
         }
     }
 
     /**
-     * Places a bet at the start of a round. Deals cards to the player and dealer.
-     * @param amount the amount to bet
+     * Deals cards to the player and dealer.
      */
-    pub fn deal_card(&mut self) {
+    pub fn deal_cards(&mut self) {
+        self.reset();
+
         let card1 = self.shoe.deal_card().expect("No more cards in the deck");
         let card2 = self.shoe.deal_card().expect("No more cards in the deck");
         let card3 = self.shoe.deal_card().expect("No more cards in the deck");
         let card4 = self.shoe.deal_card().expect("No more cards in the deck");
-
+ 
         self.player_hand = Some(Hand::new(card1, card2));
         self.dealer_hand = Some(Hand::new(card3, card4));
     }
@@ -242,6 +243,8 @@ impl Blackjack {
         // While the value of the dealer's hand is less than 17, continue to deal cards
         while dealer_hand.get_value() < 17 {
             let card = self.shoe.deal_card(); // Deal a card from the shoe
+            println!("Dealer gets: {}", card.as_ref().expect("nothing").to_string());
+
             dealer_hand.add_card(card.expect("None")); // Add it to the dealer's hand
         }
 

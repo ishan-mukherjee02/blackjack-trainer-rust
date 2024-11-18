@@ -18,6 +18,7 @@ impl BlackjackUI {
 
     // Plays a single hand of blackjack
     pub fn play_hand(&mut self) {
+        self.bj.deal_cards();
         self.play_players_hand();
         self.bj.play_dealers_hand();
         self.display_result();
@@ -52,27 +53,19 @@ impl BlackjackUI {
         let bj = &mut self.bj;
 
         while bj.can_hit() {
-            println!("Do you want to hit, stand, or double?");
+            println!("Do you want to hit or stand?");
             io::stdout().flush().unwrap();
             response.clear();
             io::stdin().read_line(&mut response).unwrap();
-    
+            
             match response.trim().to_lowercase().as_str() {
                 "hit" => {
                     bj.hit();
                     if bj.get_players_hand().expect("nothing").get_value() > 21 {
+                        println!("You now have: {}", bj.get_players_hand().expect("nothing").to_string());
                         println!("You are bust.");
+                        continue;
                     }
-                }
-                "double" => {
-                    if bj.get_players_hand().expect("nothing").get_value() > 21 {
-                        println!("You are bust.");
-                    }
-                    println!(
-                        "You have: {}",
-                        bj.get_players_hand().expect("nothing").to_string()
-                    );
-                    break;
                 }
                 "stand" => break,
                 _ => println!("Invalid option, please type 'hit', 'stand', or 'double'."),
