@@ -6,7 +6,9 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+crossterm = "0.28.1"
 rand = "0.8.5"
+ratatui = "0.29.0"
 
 [[test]]
 name = "blackjack_tester"
